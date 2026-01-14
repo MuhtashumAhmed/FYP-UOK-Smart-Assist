@@ -184,9 +184,7 @@ const ProgramsFilter = ({
                           </div>
                           <span className="truncate">{program}</span>
                         </div>
-                        <Badge variant="secondary" className="text-xs ml-2 shrink-0">
-                          {count}
-                        </Badge>
+                        
                       </button>
                     );
                   })

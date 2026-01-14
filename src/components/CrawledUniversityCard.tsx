@@ -1,36 +1,36 @@
-import { Eye, MapPin, GraduationCap, DollarSign, Award, ExternalLink, TrendingUp } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { CrawledUniversity } from '@/hooks/useCrawledUniversities';
+import {
+  Eye,
+  MapPin,
+  GraduationCap,
+  DollarSign,
+  Award,
+  ExternalLink,
+  TrendingUp,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { CrawledUniversity } from "@/hooks/useCrawledUniversities";
+import { useState } from "react";
 
 interface CrawledUniversityCardProps {
   university: CrawledUniversity;
   onViewDetails?: (universityId: string) => void;
 }
 
-const CrawledUniversityCard = ({ 
-  university, 
-  onViewDetails
+const CrawledUniversityCard = ({
+  university,
+  onViewDetails,
 }: CrawledUniversityCardProps) => {
   const info = university.extracted_info;
-  
+  const [showAllFields, setShowAllFields] = useState(false);
+
   // Generate initials from university name
   const initials = university.university_name
-    .split(' ')
+    .split(" ")
     .slice(0, 2)
-    .map(word => word[0])
-    .join('')
+    .map((word) => word[0])
+    .join("")
     .toUpperCase();
-
-  // Format currency
-  const formatFee = (amount: number | undefined, currency: string = 'USD') => {
-    if (!amount) return 'N/A';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   return (
     <div className="bg-card rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-border overflow-hidden group">
@@ -40,18 +40,24 @@ const CrawledUniversityCard = ({
           <div className="flex items-center gap-4">
             {/* Logo or initials */}
             {university.logo_url ? (
-              <img 
-                src={university.logo_url} 
+              <img
+                src={university.logo_url}
                 alt={`${university.university_name} logo`}
                 className="w-16 h-16 rounded-xl object-contain bg-white p-1 border"
                 onError={(e) => {
                   // Fallback to initials if logo fails to load
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  e.currentTarget.style.display = "none";
+                  e.currentTarget.nextElementSibling?.classList.remove(
+                    "hidden"
+                  );
                 }}
               />
             ) : null}
-            <div className={`w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center text-xl font-bold text-primary ${university.logo_url ? 'hidden' : ''}`}>
+            <div
+              className={`w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center text-xl font-bold text-primary ${
+                university.logo_url ? "hidden" : ""
+              }`}
+            >
               {initials}
             </div>
             <div className="flex-1 min-w-0">
@@ -72,9 +78,11 @@ const CrawledUniversityCard = ({
             </div>
           </div>
           {info?.ranking && (
-            <Badge variant="default" className="bg-primary/10 text-primary border-primary/30 border flex-shrink-0">
-              <Award className="w-3 h-3 mr-1" />
-              #{info.ranking}
+            <Badge
+              variant="default"
+              className="bg-primary/10 text-primary border-primary/30 border flex-shrink-0"
+            >
+              <Award className="w-3 h-3 mr-1" />#{info.ranking}
             </Badge>
           )}
         </div>
@@ -88,17 +96,6 @@ const CrawledUniversityCard = ({
 
         {/* Key Stats */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          {/* Fees */}
-          <div className="bg-muted/50 rounded-lg p-3">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
-              <DollarSign className="w-3 h-3" />
-              Annual Tuition
-            </div>
-            <div className="font-semibold text-sm text-foreground">
-              {formatFee(info?.fees?.undergraduate, info?.fees?.currency)}
-            </div>
-          </div>
-          
           {/* Closing Percentage */}
           <div className="bg-muted/50 rounded-lg p-3">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
@@ -106,7 +103,11 @@ const CrawledUniversityCard = ({
               Min. Percentage
             </div>
             <div className="font-semibold text-sm text-foreground">
-              {info?.closing_percentage ? `${info.closing_percentage}%` : info?.admission_requirements?.min_percentage ? `${info.admission_requirements.min_percentage}%` : 'N/A'}
+              {info?.closing_percentage
+                ? `${info.closing_percentage}%`
+                : info?.admission_requirements?.min_percentage
+                ? `${info.admission_requirements.min_percentage}%`
+                : "---"}
             </div>
           </div>
         </div>
@@ -118,15 +119,25 @@ const CrawledUniversityCard = ({
               <GraduationCap className="w-3 h-3" />
               Programs Offered
             </div>
+
             <div className="flex flex-wrap gap-1.5">
-              {info.fields.slice(0, 4).map((field, idx) => (
-                <Badge key={idx} variant="secondary" className="text-xs">
-                  {field}
-                </Badge>
-              ))}
+              {(showAllFields ? info.fields : info.fields.slice(0, 4)).map(
+                (field, idx) => (
+                  <Badge key={idx} variant="secondary" className="text-xs">
+                    {field}
+                  </Badge>
+                )
+              )}
+
               {info.fields.length > 4 && (
-                <Badge variant="outline" className="text-xs">
-                  +{info.fields.length - 4} more
+                <Badge
+                  variant="outline"
+                  className="text-xs cursor-pointer"
+                  onClick={() => setShowAllFields(!showAllFields)}
+                >
+                  {showAllFields
+                    ? "Show less"
+                    : `+${info.fields.length - 4} more`}
                 </Badge>
               )}
             </div>
@@ -138,7 +149,10 @@ const CrawledUniversityCard = ({
           <div className="bg-muted/30 rounded-lg p-3">
             <div className="space-y-1">
               {info.features.slice(0, 3).map((feature, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-sm text-foreground">
+                <div
+                  key={idx}
+                  className="flex items-center gap-2 text-sm text-foreground"
+                >
                   <span className="text-primary text-xs">✓</span>
                   {feature}
                 </div>
@@ -160,9 +174,9 @@ const CrawledUniversityCard = ({
       {/* Action buttons */}
       <div className="px-6 py-4 bg-muted/30 border-t border-border flex items-center gap-2">
         {university.website_url && (
-          <a 
-            href={university.website_url} 
-            target="_blank" 
+          <a
+            href={university.website_url}
+            target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-primary transition-colors"
           >

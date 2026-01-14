@@ -1,48 +1,55 @@
-import { useState, useMemo } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import HeroSection from '@/components/HeroSection';
-import CrawledUniversityCard from '@/components/CrawledUniversityCard';
-import TrustBadge from '@/components/TrustBadge';
-import EmptyState from '@/components/EmptyState';
-import UniversityChatDialog from '@/components/UniversityChatDialog';
-import ProgramsFilter from '@/components/ProgramsFilter';
-import { useCrawledUniversities, CrawledUniversity } from '@/hooks/useCrawledUniversities';
-import { Loader2, GraduationCap, Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { useState, useMemo } from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import HeroSection from "@/components/HeroSection";
+import CrawledUniversityCard from "@/components/CrawledUniversityCard";
+import TrustBadge from "@/components/TrustBadge";
+import EmptyState from "@/components/EmptyState";
+import UniversityChatDialog from "@/components/UniversityChatDialog";
+import ProgramsFilter from "@/components/ProgramsFilter";
+import {
+  useCrawledUniversities,
+  CrawledUniversity,
+} from "@/hooks/useCrawledUniversities";
+import { Loader2, GraduationCap, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const Index = () => {
   const { universities, loading, error } = useCrawledUniversities();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedPrograms, setSelectedPrograms] = useState<string[]>([]);
-  const [selectedUniversity, setSelectedUniversity] = useState<CrawledUniversity | null>(null);
+  const [selectedUniversity, setSelectedUniversity] =
+    useState<CrawledUniversity | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
 
   // Filter universities by search query AND selected programs
   const filteredUniversities = useMemo(() => {
-    return universities.filter(uni => {
+    return universities.filter((uni) => {
       // Search filter
-      const matchesSearch = uni.university_name.toLowerCase().includes(searchQuery.toLowerCase());
-      
+      const matchesSearch = uni.university_name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
       // Programs filter - if no programs selected, show all
       if (selectedPrograms.length === 0) {
         return matchesSearch;
       }
-      
+
       // Check if university has any of the selected programs
       const uniFields = uni.extracted_info?.fields || [];
-      const hasSelectedProgram = selectedPrograms.some(program =>
-        uniFields.some(field => 
-          field?.toLowerCase().trim() === program.toLowerCase().trim()
+      const hasSelectedProgram = selectedPrograms.some((program) =>
+        uniFields.some(
+          (field) =>
+            field?.toLowerCase().trim() === program.toLowerCase().trim()
         )
       );
-      
+
       return matchesSearch && hasSelectedProgram;
     });
   }, [universities, searchQuery, selectedPrograms]);
 
   const handleViewDetails = (universityId: string) => {
-    const uni = universities.find(u => u.university_id === universityId);
+    const uni = universities.find((u) => u.university_id === universityId);
     if (uni) {
       setSelectedUniversity(uni);
       setChatOpen(true);
@@ -68,7 +75,8 @@ const Index = () => {
                       Available Universities
                     </h2>
                     <p className="text-muted-foreground">
-                      Explore universities with detailed information and AI-powered assistance
+                      Explore universities with detailed information and
+                      AI-powered assistance
                     </p>
                   </div>
 
@@ -108,46 +116,60 @@ const Index = () => {
             {/* Error state */}
             {error && !loading && (
               <div className="text-center py-16">
-                <p className="text-destructive mb-2">Failed to load universities</p>
+                <p className="text-destructive mb-2">
+                  Failed to load universities
+                </p>
                 <p className="text-muted-foreground text-sm">{error}</p>
               </div>
             )}
 
             {/* Empty state */}
-            {!loading && !error && universities.length === 0 && (
-              <EmptyState />
-            )}
+            {!loading && !error && universities.length === 0 && <EmptyState />}
 
             {/* No results from search/filter */}
-            {!loading && !error && universities.length > 0 && filteredUniversities.length === 0 && (
-              <div className="text-center py-16">
-                <GraduationCap className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">
-                  No universities found matching your criteria
-                </p>
-                {(searchQuery || selectedPrograms.length > 0) && (
-                  <button
-                    onClick={() => {
-                      setSearchQuery('');
-                      setSelectedPrograms([]);
-                    }}
-                    className="mt-2 text-primary hover:underline text-sm"
-                  >
-                    Clear all filters
-                  </button>
-                )}
-              </div>
-            )}
+            {!loading &&
+              !error &&
+              universities.length > 0 &&
+              filteredUniversities.length === 0 && (
+                <div className="text-center py-16">
+                  <GraduationCap className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">
+                    No universities found matching your criteria
+                  </p>
+                  {(searchQuery || selectedPrograms.length > 0) && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery("");
+                        setSelectedPrograms([]);
+                      }}
+                      className="mt-2 text-primary hover:underline text-sm"
+                    >
+                      Clear all filters
+                    </button>
+                  )}
+                </div>
+              )}
 
             {/* Stats bar */}
             {!loading && !error && filteredUniversities.length > 0 && (
               <div className="flex items-center gap-4 mb-6 text-sm">
                 <span className="text-muted-foreground">
-                  Showing{' '}
-                  <span className="font-semibold text-foreground">{filteredUniversities.length}</span>{' '}
-                  {filteredUniversities.length === 1 ? 'university' : 'universities'}
+                  Showing{" "}
+                  <span className="font-semibold text-foreground">
+                    {filteredUniversities.length}
+                  </span>{" "}
+                  {filteredUniversities.length === 1
+                    ? "university"
+                    : "universities"}
                   {selectedPrograms.length > 0 && (
-                    <> offering <span className="font-semibold text-foreground">{selectedPrograms.length}</span> selected program{selectedPrograms.length > 1 ? 's' : ''}</>
+                    <>
+                      {" "}
+                      offering{" "}
+                      <span className="font-semibold text-foreground">
+                        {selectedPrograms.length}
+                      </span>{" "}
+                      selected program{selectedPrograms.length > 1 ? "s" : ""}
+                    </>
                   )}
                 </span>
               </div>
