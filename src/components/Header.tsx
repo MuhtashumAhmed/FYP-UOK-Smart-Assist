@@ -90,7 +90,7 @@ const Header = () => {
                       Admin Dashboard
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuSeparator />
+                  
                   <DropdownMenuItem
                     onClick={handleSignOut}
                     className="gap-2 text-destructive"
