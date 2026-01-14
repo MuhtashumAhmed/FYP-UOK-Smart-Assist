@@ -1,0 +1,52 @@
+project_id = "wcbyjbvgczxpptqaiicp"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://localhost"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000"]
+
+[functions.firecrawl-crawl]
+verify_jwt = false
+
+[functions.firecrawl-map]
+verify_jwt = false
+
+[functions.firecrawl-status]
+verify_jwt = false
+
+[functions.create-university-table]
+verify_jwt = false
+
+[functions.extract-university-info]
+verify_jwt = false
+
+[functions.fetch-university-logo]
+verify_jwt = false
+
+[functions.university-chat]
+verify_jwt = false
+
+[functions.upload-university-pdf]
+verify_jwt = false
+
+[functions.generate-embeddings]
+verify_jwt = false
+
+[functions.ocr-pdf]
+verify_jwt = false
