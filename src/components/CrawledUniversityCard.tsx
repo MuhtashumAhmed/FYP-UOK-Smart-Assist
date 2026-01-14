@@ -61,7 +61,7 @@ const CrawledUniversityCard = ({
               {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors truncate">
+              <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors  line-clamp-1  ">
                 {info?.name || university.university_name}
               </h3>
               {info?.location && (
